@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const newsSchema = mongoose.Schema({
 	title: {
 		type: String,
 		required: true,
@@ -17,6 +17,10 @@ const userSchema = mongoose.Schema({
 		type: String,
 		require: true,
 	},
+	deleteFlag: {
+        type: Boolean,
+        default: false,
+    }
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('News', newsSchema);
