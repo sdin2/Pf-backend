@@ -1,28 +1,11 @@
-const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv").config();
-const userRoute = require("./src/routes/userRoute");
-const { user, password } = process.env;
-// settings - necesario para heroku
-const app = express();
-const port = process.env.PORT || 3001;
+const server = require("./src/app.js");
+const { conn } = require("./src/db.js");
 
-// middlewares
-app.use(express.json());
-app.use("/api", userRoute);
+let port = process.env.PORT || 3001;
 
-// routes
-app.get("/", (req, res) => {
-  res.send("Nothing to see here, but it works");
+// Syncing all the models at once.
+conn.sync({ force: true }).then(() => {
+  server.listen(port, () => {
+    console.log(`%s listening at ${port}`); // eslint-disable-line no-console
+  });
 });
-
-// mongodb connection
-mongoose
-  .connect(
-    `mongodb+srv://${user}:${password}@pf-henry.at6ynza.mongodb.net/?retryWrites=true&w=majority`
-  )
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch((error) => console.error(error));
-
-// server listening
-app.listen(port, () => console.log("Server listening to", port));
