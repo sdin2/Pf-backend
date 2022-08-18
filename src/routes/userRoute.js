@@ -1,36 +1,48 @@
+const { default: axios } = require("axios");
 const express = require("express");
-const userSchema = require("../models/users");
-
 const router = express.Router();
+const { User } = require("../db.js");
 
 // create user
-router.post("/users", (req, res) => {
-  const user = userSchema(req.body);
-  user
-    .save()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+router.post("/", async (req, res, next) => {
+  const { email, nickname, img, password, favoriteGames } = req.body;
+  try {
+    const createUser = await User.create({
+      email,
+      nickname,
+      img,
+      password,
+      favoriteGames,
+    });
+    res.send(createUser);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // get all users
-router.get("/users", (req, res) => {
-  userSchema
-    .find()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+router.get("/", async (req, res, next) => {
+  try {
+    const userData = await User.findAll();
+    res.send(userData);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // get a user
-router.get("/users/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
   const { id } = req.params;
-  userSchema
-    .findById(id)
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const userData = User.findByPk(id);
+    res.send(userData);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // update a user
-router.put("/users/:id", (req, res) => {
+router.put("/:id", async (req, res, next) => {
   const { id } = req.params;
   const {
     email,
@@ -48,30 +60,35 @@ router.put("/users/:id", (req, res) => {
     rating,
     plan,
   } = req.body;
-  userSchema
-    .updateOne(
-      { _id: id },
+
+  try {
+    const userData = await User.findByPk(id);
+    // await User.findOne({ where: { firstName: 'John' } });
+    const userUpdate = await userData.update(
       {
-        $set: {
-          email,
-          nickname,
-          img,
-          deleteFlag,
-          bannedFlag,
-          password,
-          matched_users,
-          coins,
-          favoriteGames,
-          servers,
-          missionCompleted,
-          isAdmin,
-          rating,
-          plan,
+        where: {
+          nickname: nickname,
         },
       }
-    )
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+      // email,
+      // nickname,
+      // img,
+      // deleteFlag,
+      // bannedFlag,
+      // password,
+      // matched_users,
+      // coins,
+      // favoriteGames,
+      // servers,
+      // missionCompleted,
+      // isAdmin,
+      // rating,
+      // plan
+    );
+    res.status(200).json(userUpdate);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
