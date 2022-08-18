@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  sequelize.define("user", {
+  sequelize.define("users", {
     email: {
       type: DataTypes.STRING,
       allownull: false,
@@ -24,47 +24,47 @@ module.exports = (sequelize) => {
     },
     deleteFlag: {
       type: DataTypes.BOOLEAN,
-      default: false,
+      defaultValue: false,
     },
     bannedFlag: {
       type: DataTypes.BOOLEAN,
-      default: false,
+      defaultValue: false,
     },
     password: {
       type: DataTypes.STRING,
       required: true,
     },
     matched_users: {
-      type: DataTypes.STRING,
-      default: [],
+      type: DataTypes.JSON,
+      defaultValue: [],
     },
     coins: {
       type: DataTypes.INTEGER,
-      default: 0,
+      defaultValue: 0,
     },
     favoriteGames: {
       type: DataTypes.JSON,
-      default: [],
+      defaultValue: [],
     },
     servers: {
       type: DataTypes.JSON,
-      default: [],
+      defaultValue: [],
     },
     missionCompleted: {
       type: DataTypes.JSON,
-      default: [],
+      defaultValue: [],
     },
     isAdmin: {
       type: DataTypes.JSON,
-      default: { user: true, admin: false, superAdmin: false },
+      defaultValue: { user: true, admin: false, superAdmin: false },
     },
     rating: {
       type: DataTypes.INTEGER,
-      default: 0,
+      defaultValue: 0,
     },
     plan: {
       type: DataTypes.BOOLEAN,
-      default: false,
+      defaultValue: false,
     },
   });
 };
