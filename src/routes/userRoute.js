@@ -64,41 +64,22 @@ router.put("/:id", async (req, res, next) => {
   console.log(allBody);
   try {
     let userData = await User.findByPk(id);
-    await userData.update(
-      {
-        nickname: allBody.nickname,
-        email: allBody.email,
-        img: allBody.img,
-        deleteFlag: allBody.deleteFlag,
-        bannedFlag: allBody.bannedFlag,
-        password: allBody.password,
-        matched_users: allBody.matched_users,
-        coins: allBody.coins,
-        favoriteGames: allBody.favoriteGames,
-        servers: allBody.servers,
-        missionCompleted: allBody.missionCompleted,
-        isAdmin: allBody.isAdmin,
-        rating: allBody.rating,
-        plan: allBody.plan,
-      }
-      // {
-      //   nickname: nickname,
-      // }
-      // email,
-      // nickname,
-      // img,
-      // deleteFlag,
-      // bannedFlag,
-      // password,
-      // matched_users,
-      // coins,
-      // favoriteGames,
-      // servers,
-      // missionCompleted,
-      // isAdmin,
-      // rating,
-      // plan
-    );
+    await userData.update({
+      nickname: allBody.nickname,
+      email: allBody.email,
+      img: allBody.img,
+      deleteFlag: allBody.deleteFlag,
+      bannedFlag: allBody.bannedFlag,
+      password: allBody.password,
+      matched_users: allBody.matched_users,
+      coins: allBody.coins,
+      favoriteGames: allBody.favoriteGames,
+      servers: allBody.servers,
+      missionCompleted: allBody.missionCompleted,
+      isAdmin: allBody.isAdmin,
+      rating: allBody.rating,
+      plan: allBody.plan,
+    });
     res.status(200).json(userData);
   } catch (error) {
     next(error);
