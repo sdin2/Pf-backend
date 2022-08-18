@@ -45,7 +45,6 @@ router.get("/:id", (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const id = req.params.id;
   const allBody = req.body;
-  console.log(allBody);
   try {
     let userData = await User.findByPk(id);
     await userData.update({
