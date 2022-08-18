@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema({
   },
   deleteFlag: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   bannedFlag: {
     type: Boolean,
