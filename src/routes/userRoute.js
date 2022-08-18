@@ -43,33 +43,47 @@ router.get("/:id", (req, res, next) => {
 
 // update a user
 router.put("/:id", async (req, res, next) => {
-  const { id } = req.params;
-  const {
-    email,
-    nickname,
-    img,
-    deleteFlag,
-    bannedFlag,
-    password,
-    matched_users,
-    coins,
-    favoriteGames,
-    servers,
-    missionCompleted,
-    isAdmin,
-    rating,
-    plan,
-  } = req.body;
-
+  const id = req.params.id;
+  // const {
+  //   email,
+  //   nickname,
+  //   img,
+  //   deleteFlag,
+  //   bannedFlag,
+  //   password,
+  //   matched_users,
+  //   coins,
+  //   favoriteGames,
+  //   servers,
+  //   missionCompleted,
+  //   isAdmin,
+  //   rating,
+  //   plan,
+  // } = req.body;
+  const allBody = req.body;
+  console.log(allBody);
   try {
-    const userData = await User.findByPk(id);
-    // await User.findOne({ where: { firstName: 'John' } });
-    const userUpdate = await userData.update(
+    let userData = await User.findByPk(id);
+    await userData.update(
       {
-        where: {
-          nickname: nickname,
-        },
+        nickname: allBody.nickname,
+        email: allBody.email,
+        img: allBody.img,
+        deleteFlag: allBody.deleteFlag,
+        bannedFlag: allBody.bannedFlag,
+        password: allBody.password,
+        matched_users: allBody.matched_users,
+        coins: allBody.coins,
+        favoriteGames: allBody.favoriteGames,
+        servers: allBody.servers,
+        missionCompleted: allBody.missionCompleted,
+        isAdmin: allBody.isAdmin,
+        rating: allBody.rating,
+        plan: allBody.plan,
       }
+      // {
+      //   nickname: nickname,
+      // }
       // email,
       // nickname,
       // img,
@@ -85,7 +99,7 @@ router.put("/:id", async (req, res, next) => {
       // rating,
       // plan
     );
-    res.status(200).json(userUpdate);
+    res.status(200).json(userData);
   } catch (error) {
     next(error);
   }

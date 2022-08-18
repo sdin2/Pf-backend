@@ -24,22 +24,26 @@ module.exports = (sequelize) => {
     },
     deleteFlag: {
       type: DataTypes.BOOLEAN,
+      allownull: true,
       defaultValue: false,
     },
     bannedFlag: {
       type: DataTypes.BOOLEAN,
+      allownull: true,
       defaultValue: false,
     },
     password: {
       type: DataTypes.STRING,
-      required: true,
+      allownull: false,
     },
     matched_users: {
       type: DataTypes.JSON,
       defaultValue: [],
+      allownull: true,
     },
     coins: {
       type: DataTypes.INTEGER,
+      allownull: true,
       defaultValue: 0,
     },
     favoriteGames: {
