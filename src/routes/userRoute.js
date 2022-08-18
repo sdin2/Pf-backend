@@ -44,22 +44,6 @@ router.get("/:id", (req, res, next) => {
 // update a user
 router.put("/:id", async (req, res, next) => {
   const id = req.params.id;
-  // const {
-  //   email,
-  //   nickname,
-  //   img,
-  //   deleteFlag,
-  //   bannedFlag,
-  //   password,
-  //   matched_users,
-  //   coins,
-  //   favoriteGames,
-  //   servers,
-  //   missionCompleted,
-  //   isAdmin,
-  //   rating,
-  //   plan,
-  // } = req.body;
   const allBody = req.body;
   console.log(allBody);
   try {
