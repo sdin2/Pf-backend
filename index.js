@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const userRoute = require("./src/routes/userRoute");
 const { user, password } = process.env;
-// settings
+// settings - necesario para heroku
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -13,7 +13,7 @@ app.use("/api", userRoute);
 
 // routes
 app.get("/", (req, res) => {
-  res.send("Welcome to my API");
+  res.send("Nothing to see here, but it works");
 });
 
 // mongodb connection
