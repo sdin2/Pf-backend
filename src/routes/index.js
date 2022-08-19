@@ -1,10 +1,13 @@
-require("dotenv").config();
-const { Router } = require("express");
+require('dotenv').config();
+const { Router } = require('express');
+const { auth } = require('express-openid-connect');
 const router = Router();
-const newsRoute = require("./newsRoute");
-const userRoute = require("./userRoute");
+const newsRoute = require('./newsRoute');
+const userRoute = require('./userRoute');
 
-router.use("/news", newsRoute);
-router.use("/users", userRoute);
+// const loginRoute = require('./loginRoute');
+
+router.use('/news', newsRoute);
+router.use('/users', userRoute);
 
 module.exports = router;
