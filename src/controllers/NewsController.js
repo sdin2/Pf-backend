@@ -1,7 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 const { API_KEY } = process.env;
-const { New }  = require("../db");
+const { New } = require("../db");
 
 async function getNewsApi() {
   const newsApi = await axios.get(
@@ -19,13 +19,8 @@ async function getNewsApi() {
   return array;
 }
 
-async function getNewsDB(){
-  let newsDB = await New.findAll({
-      where: [{
-          id: id
-          }
-      ]
-  });
+async function getNewsDB() {
+  let newsDB = await New.findAll();
   return newsDB;
 }
 
