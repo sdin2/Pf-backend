@@ -1,15 +1,15 @@
 const axios = require("axios");
 require("dotenv").config();
 const { API_KEY } = process.env;
-const newsSchema = require("../models/New");
+const { New } = require("../db");
 
 async function getNewsApi() {
   const newsApi = await axios.get(
-    `https://mmo-games.p.rapidapi.com/latestnews?key=${API_KEY}`
+    `https://www.mmobomb.com/api1/latestnews?key=${API_KEY}`
   );
-  const array = newsApi.map((e) => {
+  const array = newsApi.data.map((e) => {
     return {
-      id: e.id,
+      id: e._id,
       title: e.title,
       short_description: e.short_description,
       main_image: e.main_image,
@@ -19,12 +19,10 @@ async function getNewsApi() {
   return array;
 }
 
-const getNewsDB = async () => {
-  newsSchema
-    .find()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
-};
+async function getNewsDB() {
+  let newsDB = await New.findAll();
+  return newsDB;
+}
 
 async function getAllNews() {
   const apiNews = await getNewsApi();

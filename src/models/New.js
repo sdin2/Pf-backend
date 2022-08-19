@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  sequelize.define("users", {
+  sequelize.define("new", {
     article_content: {
       type: DataTypes.STRING,
       allownull: false,
@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    creatneInDb: {
+    createInDb: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
