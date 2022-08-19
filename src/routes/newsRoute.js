@@ -7,7 +7,7 @@ const { API_KEY } = process.env;
 
 const router = Router();
 
-router.get("/:id", async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   const id = req.params.id;
   const title = req.query.title;
 
