@@ -7,7 +7,7 @@ const { User } = require("../db.js");
 router.post("/", async (req, res, next) => {
   const { email, nickname, img, password, favoriteGames } = req.body;
   try {
-    const createUser = await User.create({
+    const createUser = await User.findOrCreate({
       email,
       nickname,
       img,
