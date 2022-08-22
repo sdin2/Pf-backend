@@ -4,7 +4,6 @@ const router = express.Router();
 const { User } = require('../db.js');
 
 // create user
-<<<<<<< HEAD
 router.post('/', async (req, res, next) => {
 	const user = req.body;
 	try {
@@ -39,62 +38,62 @@ router.get('/:id', (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-=======
-router.post("/", async (req, res, next) => {
-  const user = req.body;
-  try {
-    const userData = await User.findAll();
-    if (user.email) {
-      if (userData.filter((e) => e.nickname === user.nickname).length === 0) {
-        const createUser = await User.findOrCreate({
-          where: {
-            email: user.email,
-            nickname: user.nickname,
-          },
-        });
-      } else {
-        const createUser = await User.findOrCreate({
-          where: {
-            email: user.email,
-            nickname: user.nickname + "123",
-          },
-        });
-        res.send(createUser);
-      }
-    } else res.status(400).send("user null");
-  } catch (error) {
-    next(error);
-  }
+});
+
+router.post('/', async (req, res, next) => {
+	const user = req.body;
+	try {
+		const userData = await User.findAll();
+		if (user.email) {
+			if (userData.filter(e => e.nickname === user.nickname).length === 0) {
+				const createUser = await User.findOrCreate({
+					where: {
+						email: user.email,
+						nickname: user.nickname,
+					},
+				});
+			} else {
+				const createUser = await User.findOrCreate({
+					where: {
+						email: user.email,
+						nickname: user.nickname + '123',
+					},
+				});
+				res.send(createUser);
+			}
+		} else res.status(400).send('user null');
+	} catch (error) {
+		next(error);
+	}
 });
 
 // get all users
-router.get("/", async (req, res, next) => {
-  try {
-    let email = req.query.email;
-    const userData = await User.findAll();
-    if (email) {
-      const userByEmail = userData.filter((e) => e.email === email);
-      res.status(200).send(userByEmail);
-    } else {
-      res.send(userData);
-    }
-  } catch (error) {
-    next(error);
-  }
+router.get('/', async (req, res, next) => {
+	try {
+		let email = req.query.email;
+		const userData = await User.findAll();
+		if (email) {
+			const userByEmail = userData.filter(e => e.email === email);
+			res.status(200).send(userByEmail);
+		} else {
+			res.send(userData);
+		}
+	} catch (error) {
+		next(error);
+	}
 });
 
 // get a user
-router.get("/:id", async (req, res, next) => {
-  const id = req.params.id;
-  console.log(id);
-  try {
-    const userData = await User.findByPk(id);
-    console.log(userData);
-    res.send(userData);
-  } catch (error) {
-    next(error);
-  }
->>>>>>> 956fe30aeb75aa02305560690d986cd35f58c8bb
+router.get('/:id', async (req, res, next) => {
+	const id = req.params.id;
+	console.log(id);
+	try {
+		const userData = await User.findByPk(id);
+		console.log(userData);
+		res.send(userData);
+	} catch (error) {
+		next(error);
+	}
 });
 
 // update a user
