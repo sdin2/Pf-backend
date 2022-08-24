@@ -3,7 +3,7 @@ require("dotenv").config();
 const { API_KEY_GAMES } = process.env;
 const { Game } = require("../db");
 
-async function getGamesApi() {
+async function getAllGames() {
   let gamesAPI;
   let url;
   let array = [];
@@ -18,7 +18,7 @@ async function getGamesApi() {
     };
   });
   array = [...array, ...gamesFilter];
-  for (let i = 1; i < 5; i++) {
+  for (let i = 1; i < 20; i++) {
     url = gamesAPI.data.next;
     gamesAPI = await axios.get(url);
     let gamesFilter = gamesAPI.data.results.map((e) => {
@@ -38,15 +38,26 @@ async function getGamesDB() {
   return gamesDB;
 }
 
-async function getAllGames() {
-  let gamesAPI = await getGamesApi();
-  let gamesDb = await getGamesDB();
-  let allGames = gamesAPI.concat(gamesDb);
-  return allGames;
+// async function getAllGames() {
+//   let gamesAPI = await getGamesApi();
+//   // let gamesDb = await getGamesDB();
+//   // let allGames = gamesAPI.concat(gamesDb);
+//   return gamesAPI;
+// }
+
+async function saveAllGamesInDb() {
+  const allGames = await getAllGames();
+  allGames.forEach((e) => {
+    Game.findOrCreate({
+      where: { name: e.name, img: e.img, id: e.id },
+    });
+  });
+  console.log("all games saved in data base");
 }
 
 module.exports = {
-  getGamesApi,
+  // getGamesApi,
   getGamesDB,
   getAllGames,
+  saveAllGamesInDb,
 };
