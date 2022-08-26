@@ -37,7 +37,7 @@ router.get("/", async (req, res, next) => {
       },
     });
     if (name) {
-      const getMissionsByName = missionData.filter((e) => e.title.includes(title));
+      const getMissionsByName = missionData.filter((e) => e.name.includes(name));
       res.status(200).send(getMissionsByName);
     } else {
       res.send(missionData);

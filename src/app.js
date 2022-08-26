@@ -4,12 +4,12 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const routes = require("./routes/index.js");
 const { auth } = require("express-openid-connect");
-const Stripe = require("stripe");
+// const Stripe = require("stripe");
 require("dotenv").config();
 
 require("./db");
 
-const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
+// const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
 const server = express();
 const config = {
   authRequired: false,
@@ -40,20 +40,20 @@ server.use((req, res, next) => {
 });
 
 server.use("/", routes);
-server.post("/api/checkout", async (req, res) => {
-  const { id, amount } = req.body;
-  try {
-    const payment = await stripe.paymentIntents.create({
-      amount,
-      currency: "USD",
-      payment_method: id,
-      confirm: true,
-    });
-    res.status(200).json(payment);
-  } catch (error) {
-    res.send(error.raw.message);
-  }
-});
+// server.post("/api/checkout", async (req, res) => {
+//   const { id, amount, dataUser } = req.body;
+//   try {
+//     const payment = await stripe.paymentIntents.create({
+//       amount,
+//       currency: "USD",
+//       payment_method: id,
+//       confirm: true,
+//     });
+//     res.status(200).json(payment);
+//   } catch (error) {
+//     res.send(error.raw.message);
+//   }
+// });
 
 // Error catching endware.
 server.use((err, req, res, next) => {
