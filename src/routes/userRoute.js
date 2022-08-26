@@ -71,9 +71,8 @@ router.get("/:id", async (req, res, next) => {
 
 // update a user
 router.put("/:id", async (req, res, next) => {
-  const id = req.params.id;
+  const id = req.params.id ? req.params.id : req.body.id;
   const allBody = req.body;
-  console.log(id, allBody);
   try {
     let userData = await User.findByPk(id);
     if (allBody.delete === false) {
@@ -83,7 +82,6 @@ router.put("/:id", async (req, res, next) => {
         (e) => e !== allBody.favorite
       );
     }
-    console.log("userData", userData.favoriteGames, "fin");
     await userData.update({
       nickname: allBody.nickname,
       email: allBody.email,
