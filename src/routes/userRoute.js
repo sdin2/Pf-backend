@@ -73,8 +73,17 @@ router.get("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const id = req.params.id;
   const allBody = req.body;
+  console.log(id, allBody);
   try {
     let userData = await User.findByPk(id);
+    if (allBody.delete === false) {
+      userData.favoriteGames = [...userData.favoriteGames, allBody.favorite];
+    } else if (allBody.delete === true) {
+      userData.favoriteGames = userData.favoriteGames.filter(
+        (e) => e !== allBody.favorite
+      );
+    }
+    console.log("userData", userData.favoriteGames, "fin");
     await userData.update({
       nickname: allBody.nickname,
       email: allBody.email,
@@ -84,14 +93,15 @@ router.put("/:id", async (req, res, next) => {
       password: allBody.password,
       matched_users: allBody.matched_users,
       coins: allBody.coins,
-      favoriteGames: allBody.favoriteGames,
+      favoriteGames: userData.favoriteGames,
       servers: allBody.servers,
       missionCompleted: allBody.missionCompleted,
       isAdmin: allBody.isAdmin,
       rating: allBody.rating,
       plan: allBody.plan,
     });
-    res.status(200).json(userData);
+
+    res.status(200).json("user updated");
   } catch (error) {
     next(error);
   }
