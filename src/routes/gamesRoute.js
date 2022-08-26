@@ -9,7 +9,7 @@ const router = Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const name = req.query.name ? req.query.name : req.body.name;
     if (name) {
       let videogameByName = await axios.get(
         `https://api.rawg.io/api/games?key=${API_KEY_GAMES}&search=${name}`
@@ -23,7 +23,7 @@ router.get("/", async (req, res, next) => {
       });
       videogameByName.length
         ? res.status(200).send(videogameByName)
-        : res.status(200).send("Not Found");
+        : res.status(200).send("Games not found");
     } else {
       let videogames = await getGamesDB();
       res.status(200).send(videogames);
@@ -31,6 +31,14 @@ router.get("/", async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+router.get("/:id", async (req, res, next) => {
+  const id = req.params.id;
+  let videoGamesById = await axios.get(
+    `https://api.rawg.io/api/games/${id}?key=${API_KEY_GAMES}`
+  );
+  res.send(videoGamesById);
 });
 
 module.exports = router;

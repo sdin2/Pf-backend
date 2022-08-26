@@ -11,22 +11,12 @@ router.post("/", async (req, res, next) => {
       const userData = await User.findOne({
         where: { nickname: user.nickname },
       });
-      if (!userData) {
-        await User.findOrCreate({
-          where: {
-            email: user.email,
-            nickname: user.nickname,
-          },
-        });
-      } else {
-        await User.findOrCreate({
-          where: {
-            email: user.email,
-            //1 1+123 1+123
-            nickname: user.email,
-          },
-        });
-      }
+      await User.findOrCreate({
+        where: {
+          email: user.email,
+          nickname: !userData ? user.nickname : user.email,
+        },
+      });
       res.send("user created");
     } else res.send("fail to create a user");
   } catch (error) {
@@ -37,8 +27,8 @@ router.post("/", async (req, res, next) => {
 // get all users
 router.get("/", async (req, res, next) => {
   try {
-    let email = req.query.email;
-    console.log(email);
+    let email = req.query.email ? req.query.email : req.body.email;
+    let nickname = req.query.nickname ? req.query.nickname : req.body.nickname;
     const userData = await User.findAll({
       include: {
         model: Forum,
@@ -48,9 +38,10 @@ router.get("/", async (req, res, next) => {
     if (email) {
       const userByEmail = userData.filter((e) => e.email === email);
       res.status(200).send(userByEmail);
-    } else {
-      res.send(userData);
-    }
+    } else if (nickname) {
+      const userByNickname = userData.filter((e) => e.nickname === nickname);
+      res.status(200).send(userByNickname);
+    } else res.send(userData);
   } catch (error) {
     next(error);
   }
@@ -59,10 +50,8 @@ router.get("/", async (req, res, next) => {
 // get a user
 router.get("/:id", async (req, res, next) => {
   const id = req.params.id;
-  console.log(id);
   try {
     const userData = await User.findByPk(id);
-    console.log(userData);
     res.send(userData);
   } catch (error) {
     next(error);
@@ -71,10 +60,17 @@ router.get("/:id", async (req, res, next) => {
 
 // update a user
 router.put("/:id", async (req, res, next) => {
-  const id = req.params.id;
+  const id = req.params.id ? req.params.id : req.body.id;
   const allBody = req.body;
   try {
     let userData = await User.findByPk(id);
+    if (allBody.delete === false) {
+      userData.favoriteGames = [...userData.favoriteGames, allBody.favorite];
+    } else if (allBody.delete === true) {
+      userData.favoriteGames = userData.favoriteGames.filter(
+        (e) => e !== allBody.favorite
+      );
+    }
     await userData.update({
       nickname: allBody.nickname,
       email: allBody.email,
@@ -84,14 +80,15 @@ router.put("/:id", async (req, res, next) => {
       password: allBody.password,
       matched_users: allBody.matched_users,
       coins: allBody.coins,
-      favoriteGames: allBody.favoriteGames,
+      favoriteGames: userData.favoriteGames,
       servers: allBody.servers,
       missionCompleted: allBody.missionCompleted,
       isAdmin: allBody.isAdmin,
       rating: allBody.rating,
       plan: allBody.plan,
     });
-    res.status(200).json(userData);
+
+    res.status(200).json("user updated");
   } catch (error) {
     next(error);
   }

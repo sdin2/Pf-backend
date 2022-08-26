@@ -49,7 +49,11 @@ async function saveAllGamesInDb() {
   const allGames = await getAllGames();
   allGames.forEach((e) => {
     Game.findOrCreate({
-      where: { name: e.name, img: e.img, id: e.id },
+      where: {
+        name: e.name,
+        img: e.img,
+        id: e.id,
+      },
     });
   });
   console.log("all games saved in data base");
