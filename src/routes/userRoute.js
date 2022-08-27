@@ -30,14 +30,20 @@ router.get("/", async (req, res, next) => {
     let email = req.query.email ? req.query.email : req.body.email;
     let nickname = req.query.nickname ? req.query.nickname : req.body.nickname;
     const userData = await User.findAll({
-      include: {
-        model: Forum,
-        attributes: ["id", "title", "deleteFlag"],
-        model: Mission,
-        attributes: ["id", "name", "completed", "coinsRewards"],
-        model: Answer,
-        attributes: ["id", "comment", "deleteFlag", "like"],
-      },
+      include: [
+        {
+          model: Forum,
+          attributes: ["id", "title", "deleteFlag"],
+        },
+        {
+          model: Answer,
+          attributes: ["id", "comment", "deleteFlag", "like"],
+        },
+        {
+          model: Mission,
+          attributes: ["id", "name", "completed", "coinsRewards"],
+        },
+      ],
     });
     if (email) {
       const userByEmail = userData.filter((e) => e.email === email);
@@ -56,18 +62,24 @@ router.get("/:id", async (req, res, next) => {
   const id = req.params.id;
   try {
     const userData = await User.findByPk(id, {
-      include: {
-        model: Forum,
-        attributes: ["id", "title", "deleteFlag"],
-        model: Mission,
-        attributes: ["id", "name", "completed", "coinsRewards"],
-        model: Answer,
-        attributes: ["id", "comment", "deleteFlag", "like"],
-      },
+      include: [
+        {
+          model: Forum,
+          attributes: ["id", "title", "deleteFlag"],
+        },
+        {
+          model: Answer,
+          attributes: ["id", "comment", "deleteFlag", "like"],
+        },
+        {
+          model: Mission,
+          attributes: ["id", "name", "completed", "coinsRewards"],
+        },
+      ],
     });
     res.send(userData);
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 
@@ -106,7 +118,7 @@ router.put("/:id", async (req, res, next) => {
 
     res.status(200).json("user updated");
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 

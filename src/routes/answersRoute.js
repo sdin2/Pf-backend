@@ -22,48 +22,57 @@ router.post("/", async (req, res, next) => {
 router.get("/", async (req, res, next) => {
   try {
     let id = req.query.id ? req.query.id : req.body.id;
+    let forumData;
     if (id) {
-      const forumData = await Answer.findByPk(id, {
-        include: {
-          model: Forum,
-          attributes: ["id", "title", "deleteFlag"],
-          model: User,
-          attributes: [
-            "id",
-            "nickname",
-            "email",
-            "img",
-            "deleteFlag",
-            "bannedFlag",
-            "isAdmin",
-            "rating",
-            "plan",
-          ],
-        },
+      forumData = await Answer.findByPk(id, {
+        include: [
+          {
+            model: Forum,
+            attributes: ["id", "title", "deleteFlag"],
+          },
+          {
+            model: User,
+            attributes: [
+              "id",
+              "nickname",
+              "email",
+              "img",
+              "deleteFlag",
+              "bannedFlag",
+              "isAdmin",
+              "rating",
+              "plan",
+            ],
+          },
+        ],
       });
     } else {
-      const forumData = await Answer.findAll({
-        include: {
-          model: Forum,
-          attributes: ["id", "title", "deleteFlag"],
-          model: User,
-          attributes: [
-            "id",
-            "nickname",
-            "email",
-            "img",
-            "deleteFlag",
-            "bannedFlag",
-            "isAdmin",
-            "rating",
-            "plan",
-          ],
-        },
+      forumData = await Answer.findAll({
+        include: [
+          {
+            model: Forum,
+            attributes: ["id", "title", "deleteFlag"],
+          },
+          {
+            model: User,
+            attributes: [
+              "id",
+              "nickname",
+              "email",
+              "img",
+              "deleteFlag",
+              "bannedFlag",
+              "isAdmin",
+              "rating",
+              "plan",
+            ],
+          },
+        ],
       });
     }
     res.send(forumData);
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 
@@ -71,22 +80,26 @@ router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const forumData = await Answer.findByPk(id, {
-      include: {
-        model: Forum,
-        attributes: ["id", "title", "deleteFlag"],
-        model: User,
-        attributes: [
-          "id",
-          "nickname",
-          "email",
-          "img",
-          "deleteFlag",
-          "bannedFlag",
-          "isAdmin",
-          "rating",
-          "plan",
-        ],
-      },
+      include: [
+        {
+          model: Forum,
+          attributes: ["id", "title", "deleteFlag"],
+        },
+        {
+          model: User,
+          attributes: [
+            "id",
+            "nickname",
+            "email",
+            "img",
+            "deleteFlag",
+            "bannedFlag",
+            "isAdmin",
+            "rating",
+            "plan",
+          ],
+        },
+      ],
     });
     res.send(forumData);
   } catch (error) {

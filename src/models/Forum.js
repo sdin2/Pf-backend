@@ -13,16 +13,12 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     text: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     othersUsersLike: {
       type: DataTypes.JSON,
       allowNull: true,
-      defaultValue: [],
-    },
-    users_response: {
-      type: DataTypes.JSON,
       defaultValue: [],
     },
     deleteFlag: {
