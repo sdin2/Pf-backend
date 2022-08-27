@@ -1,7 +1,7 @@
 const { default: axios } = require("axios");
 const express = require("express");
 const router = express.Router();
-const { User, Forum } = require("../db.js");
+const { User, Forum, Mission, Answer } = require("../db.js");
 
 // create user
 router.post("/", async (req, res, next) => {
@@ -33,6 +33,10 @@ router.get("/", async (req, res, next) => {
       include: {
         model: Forum,
         attributes: ["id", "title", "deleteFlag"],
+        model: Mission,
+        attributes: ["id", "name", "completed", "coinsRewards"],
+        model: Answer,
+        attributes: ["id", "comment", "deleteFlag", "like"],
       },
     });
     if (email) {
@@ -51,7 +55,16 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   const id = req.params.id;
   try {
-    const userData = await User.findByPk(id);
+    const userData = await User.findByPk(id, {
+      include: {
+        model: Forum,
+        attributes: ["id", "title", "deleteFlag"],
+        model: Mission,
+        attributes: ["id", "name", "completed", "coinsRewards"],
+        model: Answer,
+        attributes: ["id", "comment", "deleteFlag", "like"],
+      },
+    });
     res.send(userData);
   } catch (error) {
     next(error);

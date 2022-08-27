@@ -1,7 +1,7 @@
 const { axios } = require("axios");
 const express = require("express");
 const router = express.Router();
-const { Forum, User } = require("../db.js");
+const { Forum, User, Answer } = require("../db.js");
 
 router.post("/", async (req, res, next) => {
   const forum = req.body;
@@ -9,7 +9,7 @@ router.post("/", async (req, res, next) => {
     let userDb = await User.findOne({
       where: { nickname: forum.nickname },
     });
-    const createForum = await Forum.create({
+    await Forum.create({
       title: forum.title,
       text: forum.text,
       userId: userDb.dataValues.id,
@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    let title = req.query.title;
+    let title = req.query.title ? req.query.title : req.body.title;
     const forumData = await Forum.findAll({
       include: {
         model: User,
@@ -39,6 +39,8 @@ router.get("/", async (req, res, next) => {
           "rating",
           "plan",
         ],
+        model: Answer,
+        attributes: ["id", "comment", "like", "deleteFlag"],
       },
     });
     if (title) {
@@ -55,7 +57,26 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   const id = req.params.id;
   try {
-    const forumData = await Forum.findByPk(id);
+    const forumData = await Forum.findByPk(id, {
+      include: {
+        model: User,
+        attributes: [
+          "nickname",
+          "email",
+          "img",
+          "deleteFlag",
+          "bannedFlag",
+          "matched_users",
+          "favoriteGames",
+          "servers",
+          "isAdmin",
+          "rating",
+          "plan",
+        ],
+        model: Answer,
+        attributes: ["id", "comment", "like", "deleteFlag"],
+      },
+    });
     res.send(forumData);
   } catch (error) {
     next(error);

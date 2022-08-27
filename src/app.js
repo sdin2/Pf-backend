@@ -7,20 +7,21 @@ const routes = require("./routes/index.js");
 // const Stripe = require("stripe");
 require("dotenv").config();
 const Stripe = require("stripe");
+const axios = require("axios");
 
 require("./db");
 
 // const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
 const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
 const server = express();
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  secret: process.env.SECRET,
-  baseURL: process.env.BASEURL,
-  clientID: process.env.CLIENTID,
-  issuerBaseURL: process.env.ISSUREURL,
-};
+// const config = {
+//   authRequired: false,
+//   auth0Logout: true,
+//   secret: process.env.SECRET,
+//   baseURL: process.env.BASEURL,
+//   clientID: process.env.CLIENTID,
+//   issuerBaseURL: process.env.ISSUREURL,
+// };
 
 server.name = "API";
 
@@ -43,8 +44,9 @@ server.use((req, res, next) => {
 
 server.use("/", routes);
 server.post("/api/checkout", async (req, res) => {
-  const { id, amount, dataUser } = req.body;
   try {
+    const { id, amount, dataUser } = req.body;
+    console.log("id", id, "ammount", amount, "dataUser", dataUser, "fin");
     const payment = await stripe.paymentIntents.create({
       amount,
       currency: "USD",
@@ -54,7 +56,7 @@ server.post("/api/checkout", async (req, res) => {
     let user = await axios.get(
       `https://pf-henry-gamesportal.herokuapp.com/users/${dataUser.id}`
     );
-    console.log(user.data);
+    console.log("userData", user.data);
     axios.put(
       `https://pf-henry-gamesportal.herokuapp.com/users/${dataUser.id}`,
       {
@@ -63,17 +65,14 @@ server.post("/api/checkout", async (req, res) => {
     );
     res.status(200).json(payment);
   } catch (error) {
-    res.send(error.raw.message);
+    console.log("error", error, "datastripe", error.StripeCardError);
+    res.send(error);
   }
 });
-
 // Error catching endware.
 server.use((err, req, res, next) => {
   // eslint-disable-line no-unused-vars
-  const status = err.status || 500;
-  const message = err.message || err;
   console.error(err);
-  res.status(status).send(message);
 });
 
 module.exports = server;
