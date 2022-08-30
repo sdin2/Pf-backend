@@ -7,7 +7,7 @@ router.post("/", async (req, res, next) => {
   const { name, description, coinsRewards } = req.body;
   try {
     let userDb = await User.findOne({
-      where: { nickname: forum.nickname },
+      where: { nickname: nickname },
     });
     Mission.create({
       name,
@@ -16,7 +16,9 @@ router.post("/", async (req, res, next) => {
       userId: userDb.dataValues.id,
     });
     res.status(200).json("Mission created succesfuly!");
-  } catch (error) {}
+  } catch (error) {
+    next(error)
+  }
 });
 
 router.get("/", async (req, res, next) => {
