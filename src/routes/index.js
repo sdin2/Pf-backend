@@ -11,7 +11,7 @@ const gamesRoute = require("./gamesRoute");
 const forumRoute = require("./forumRoute");
 const rewardRoute = require("./rewardRoute");
 const missionsRoute = require("./missionsRoute");
-const forumCommentsRoutes = require("./forumCommentsRoute");
+const answersRoutes = require("./answersRoute");
 // const paymentRoute = require ('./paymentRoute')
 
 router.use("/news", newsRoute);
@@ -22,7 +22,7 @@ router.use("/games", gamesRoute);
 router.use("/forum", forumRoute);
 router.use("/reward", rewardRoute);
 router.use("/missions", missionsRoute);
-router.use("/anwsers", forumCommentsRoutes);
+router.use("/anwsers", answersRoutes);
 // router.use('/payment', paymentRoute)
 
 module.exports = router;
