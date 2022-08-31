@@ -8,12 +8,15 @@ const routes = require("./routes/index.js");
 require("dotenv").config();
 const Stripe = require("stripe");
 const axios = require("axios");
+const { Server } = require("socket.io");
+const http = require("http");
+const cors = require("cors");
 
 require("./db");
-
 // const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
 const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
 const server = express();
+server.use(cors);
 // const config = {
 //   authRequired: false,
 //   auth0Logout: true,
@@ -22,6 +25,20 @@ const server = express();
 //   clientID: process.env.CLIENTID,
 //   issuerBaseURL: process.env.ISSUREURL,
 // };
+const socketServerIo = http.createServer(server);
+const io = new Server(socketServerIo, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("messege", (messege) => {
+    console.log(messege);
+    socket.broadcast.emit("messegeFromBack", messege);
+  });
+});
 
 server.name = "API";
 
@@ -70,9 +87,9 @@ server.post("/api/checkout", async (req, res) => {
   }
 });
 // Error catching endware.
-server.use((err, req, res, next) => {
+server.use((err) => {
   // eslint-disable-line no-unused-vars
   console.error(err);
 });
 
-module.exports = server;
+module.exports = socketServerIo;

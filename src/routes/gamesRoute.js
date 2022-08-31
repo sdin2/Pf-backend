@@ -19,6 +19,7 @@ router.get("/", async (req, res, next) => {
           id: game.id,
           name: game.name,
           img: game.background_image,
+          description: "nothing to see here :V",
         };
       });
       videogameByName.length
@@ -36,20 +37,22 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   const id = req.params.id;
   try {
-    let videogameById = await axios.get(`https://api.rawg.io/api/games/${id}?key=${API_KEY_GAMES}`)
-              videogameById = videogameById.data;
-              videogameById = {
-                  id: videogameById.id,
-                  name: videogameById.name,
-                  image: videogameById.background_image,
-                  description: videogameById.description,
-              };
-              videogameById ? res.status(200).send(videogameById) : res.status(400).send('Id invalidate')
-      }
-     catch (error) {
-        next(error);
-     }
-  });
-
+    let videogameById = await axios.get(
+      `https://api.rawg.io/api/games/${id}?key=${API_KEY_GAMES}`
+    );
+    videogameById = videogameById.data;
+    videogameById = {
+      id: videogameById.id,
+      name: videogameById.name,
+      image: videogameById.background_image,
+      description: videogameById.description,
+    };
+    videogameById
+      ? res.status(200).send(videogameById)
+      : res.status(400).send("Id invalidate");
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
