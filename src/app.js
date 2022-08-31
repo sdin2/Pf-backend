@@ -3,28 +3,26 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const routes = require("./routes/index.js");
-// const { auth } = require("express-openid-connect");
-// const Stripe = require("stripe");
-require("dotenv").config();
+const { CORS_URL } = process.env;
+require("./db.js");
 const Stripe = require("stripe");
+const server = express();
 const axios = require("axios");
 const { Server } = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 
-require("./db");
-// const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
 const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
-const server = express();
-server.use(cors);
 // const config = {
 //   authRequired: false,
-//   auth0Logout: true,
+//   auth0Logout: false,
 //   secret: process.env.SECRET,
 //   baseURL: process.env.BASEURL,
 //   clientID: process.env.CLIENTID,
 //   issuerBaseURL: process.env.ISSUREURL,
 // };
+
+//socket io//////////
 const socketServerIo = http.createServer(server);
 const io = new Server(socketServerIo, {
   cors: {
@@ -34,22 +32,28 @@ const io = new Server(socketServerIo, {
 
 io.on("connection", (socket) => {
   console.log("a user connected");
+  console.log(socket.id);
   socket.on("messege", (messege) => {
     console.log(messege);
     socket.broadcast.emit("messegeFromBack", messege);
   });
 });
+/////////////////////////
 
 server.name = "API";
 
+// server.use(
+//   cors({
+//     origin: ["*", "*"],
+//   })
+// );
 server.use(express.json());
-// server.use(auth(config));
 server.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 server.use(bodyParser.json({ limit: "50mb" }));
 server.use(cookieParser());
 server.use(morgan("dev"));
 server.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Origin", CORS_URL); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Headers",
@@ -87,7 +91,7 @@ server.post("/api/checkout", async (req, res) => {
   }
 });
 // Error catching endware.
-server.use((err) => {
+server.use((err, req, res, next) => {
   // eslint-disable-line no-unused-vars
   console.error(err);
 });

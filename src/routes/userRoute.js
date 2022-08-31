@@ -27,6 +27,7 @@ router.post("/", async (req, res, next) => {
 // get all users
 router.get("/", async (req, res, next) => {
   try {
+    let findNickname = req.query.findNickname;
     let email = req.query.email ? req.query.email : req.body.email;
     let nickname = req.query.nickname ? req.query.nickname : req.body.nickname;
     const userData = await User.findAll({
@@ -52,9 +53,14 @@ router.get("/", async (req, res, next) => {
       const userByNickname = userData.filter(
         (e) => e.nickname.toLowerCase() === nickname.toLowerCase()
       );
+
       userByNickname.length === 0
         ? res.send("User not found")
         : res.status(200).send(userByNickname);
+    }
+    if (findNickname == "nickname") {
+      let userDataOnlyNickname = userData.map((e) => e.nickname);
+      res.send(userDataOnlyNickname);
     } else res.send(userData);
   } catch (error) {
     next(error);
@@ -123,20 +129,6 @@ router.put("/:id", async (req, res, next) => {
     res.status(200).json("user updated");
   } catch (error) {
     console.log(error);
-  }
-});
-
-router.get("/:nickname/available", async (res, req) => {
-  const { nickname } = req.params;
-
-  const nicknameAvailable = await User.finOne({
-    where: { [nickname]: nickname },
-  });
-
-  if (nicknameAvailable === null) {
-    res.send(true);
-  } else {
-    res.send(false);
   }
 });
 

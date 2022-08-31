@@ -5,12 +5,15 @@ const { Forum, User, Answer } = require("../db.js");
 
 router.post("/", async (req, res, next) => {
   const userId = req.body.userId ? req.body.userId : req.query.userId;
+  const genreId = req.body.userId ? req.body.userId : req.query.userId;
   const forum = req.body;
   try {
     await Forum.create({
       title: forum.title,
       text: forum.text,
       userId: userId,
+      genreId: genreId,
+      genre: forum.genre,
     });
     res.send("Posteo completado");
   } catch (error) {
@@ -39,7 +42,30 @@ router.get("/", async (req, res, next) => {
             "plan",
           ],
         },
-        { model: Answer, attributes: ["id", "comment", "like", "deleteFlag"] },
+        {
+          model: Answer,
+          attributes: [
+            "id",
+            "comment",
+            "like",
+            "deleteFlag",
+            "userId",
+            "createdAt",
+          ],
+          include: {
+            model: User,
+            attributes: [
+              "nickname",
+              "email",
+              "img",
+              "deleteFlag",
+              "bannedFlag",
+              "isAdmin",
+              "rating",
+              "plan",
+            ],
+          },
+        },
       ],
     });
     if (title) {
@@ -74,7 +100,30 @@ router.get("/:id", async (req, res, next) => {
             "plan",
           ],
         },
-        { model: Answer, attributes: ["id", "comment", "like", "deleteFlag"] },
+        {
+          model: Answer,
+          attributes: [
+            "id",
+            "comment",
+            "like",
+            "deleteFlag",
+            "userId",
+            "createdAt",
+          ],
+          include: {
+            model: User,
+            attributes: [
+              "nickname",
+              "email",
+              "img",
+              "deleteFlag",
+              "bannedFlag",
+              "isAdmin",
+              "rating",
+              "plan",
+            ],
+          },
+        },
       ],
     });
     res.send(forumData);
