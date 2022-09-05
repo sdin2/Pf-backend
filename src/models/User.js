@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
     img: {
       type: DataTypes.STRING,
       allownull: true,
-      defaultValue: "https://j.gifs.com/ygdY27.gif",
+      defaultValue: "https://c.tenor.com/0uhDKfV30zcAAAAC/gaming.gif",
     },
     deleteFlag: {
       type: DataTypes.BOOLEAN,
