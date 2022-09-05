@@ -13,6 +13,8 @@ const http = require("http");
 const cors = require("cors");
 
 const stripe = new Stripe(process.env.SECRET_KEY_STRIPE);
+// server.use(cors);
+
 // const config = {
 //   authRequired: false,
 //   auth0Logout: false,
@@ -33,9 +35,16 @@ const io = new Server(socketServerIo, {
 io.on("connection", (socket) => {
   console.log("a user connected");
   console.log(socket.id);
+
+  socket.on("room",(room)=>{
+    console.log(room);
+    socket.join(room.room)
+    console.log("joined to room")
+  })
+
   socket.on("messege", (messege) => {
     console.log(messege);
-    socket.broadcast.emit("messegeFromBack", messege);
+    socket.to(messege.room).emit("messegeFromBack", messege);
   });
 });
 /////////////////////////

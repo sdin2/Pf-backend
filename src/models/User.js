@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
     img: {
       type: DataTypes.STRING,
       allownull: true,
-      defaultValue: "https://j.gifs.com/ygdY27.gif",
+      defaultValue: "https://c.tenor.com/0uhDKfV30zcAAAAC/gaming.gif",
     },
     deleteFlag: {
       type: DataTypes.BOOLEAN,
@@ -60,8 +60,12 @@ module.exports = (sequelize) => {
       defaultValue: [],
     },
     isAdmin: {
-      type: DataTypes.JSON,
-      defaultValue: { user: true, admin: false, superAdmin: false },
+      type: DataTypes.BOOLEAN,
+      defaultValue:  false
+    },
+    isSuperAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue:  false
     },
     rating: {
       type: DataTypes.INTEGER,
@@ -77,7 +81,11 @@ module.exports = (sequelize) => {
     },
     description: {
       type: DataTypes.STRING,
-      defaultValue: "Bienvenido a mi perfil!",
+      defaultValue: "Welcome to my profile",
+    },
+    friends: {
+      type: DataTypes.JSON,
+      defaultValue: [],
     },
   });
 };

@@ -3,10 +3,10 @@ const express = require("express");
 const router = express.Router();
 const { Chat, User } = require("../db.js");
 
-
 router.post("/", async (req, res, next) => {
   const chat = req.body;
   let idRoom = [chat.user1Id, chat.user2Id].sort().join("_");
+  console.log(idRoom, chat);
   try {
     await Chat.findOrCreate({
       where: { id: idRoom },
@@ -22,7 +22,6 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-
 router.get("/", async (req, res, next) => {
   try {
     let chats = await Chat.findAll();
@@ -31,7 +30,6 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
-
 
 router.get("/:id", async (req, res, next) => {
   let id = req.params.id ? req.params.id : req.body.id;
@@ -43,20 +41,13 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-
 router.put("/:id", async (req, res, next) => {
   const id = req.params.id ? req.params.id : req.body.id;
   const allBody = req.body;
   try {
     let chatData = await Chat.findByPk(id);
-    let userChat = [
-      {
-        userId: allBody.userId,
-        messages: allBody.messages,
-        createdAt: chatData.updatedAt,
-      },
-    ];
-    chatData.messages = allBody.messages && allBody.userId ? [...chatData.messages, userChat]: [...chatData.messages];
+    let userChat = [{userId: allBody.userId, messages: allBody.messages, createdAt:chatData.updatedAt}];
+    chatData.messages = [...chatData.messages, userChat];
     await chatData.update({
       messages: chatData.messages,
       deleteFlag: allBody.deleteFlag,
