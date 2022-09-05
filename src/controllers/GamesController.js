@@ -18,7 +18,7 @@ async function getAllGames() {
     };
   });
   array = [...array, ...gamesFilter];
-  for (let i = 1; i < 20; i++) {
+  for (let i = 1; i < 2; i++) {
     url = gamesAPI.data.next;
     gamesAPI = await axios.get(url);
     let gamesFilter = gamesAPI.data.results.map((e) => {

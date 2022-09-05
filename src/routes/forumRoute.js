@@ -12,7 +12,6 @@ router.post("/", async (req, res, next) => {
       title: forum.title,
       text: forum.text,
       userId: userId,
-      genreId: genreId,
       genre: forum.genre,
     });
     res.send("Posteo completado");
@@ -135,16 +134,25 @@ router.get("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const id = req.params.id;
   const allBody = req.body;
+  console.log(allBody)
   try {
     let forumData = await Forum.findByPk(id);
+    if (allBody.othersUsersLike){
+      allBody.othersUsersLike=[...forumData.othersUsersLike,allBody.othersUsersLike]
+    }
+    if (allBody.report && !forumData.report.some(f=>f===allBody.report)){
+      allBody.report=[...forumData.report, allBody.report]
+    }
+    console.log(forumData)
     await forumData.update({
       title: allBody.title,
       text: allBody.text,
       deleteFlag: allBody.deleteFlag,
       othersUsersLike: allBody.othersUsersLike,
+      report: allBody.report,
       users_response: allBody.users_response,
     });
-    res.json("Posteo editado correctamente");
+    res.send("Posteo editado correctamente");
   } catch (error) {
     next(error);
   }
