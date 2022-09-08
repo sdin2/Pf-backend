@@ -45,10 +45,6 @@ router.get("/", async (req, res, next) => {
           model: Mission,
           attributes: ["id", "name", "completed", "coinsRewards"],
         },
-        // {
-        //   model: Chat,
-        //   attributes: ["deleteFlag", "messages", "id"],
-        // },
       ],
     });
     if (email) {
@@ -89,7 +85,7 @@ router.get("/:id", async (req, res, next) => {
         },
         {
           model: Mission,
-          attributes: ["id", "name", "completed", "coinsRewards"],
+          attributes: ["id", "name", "completed", "coinsRewards","icon"],
         },
         {model: Chat,
           attributes: ["id", "messages", "deleteFlag"]}
@@ -116,11 +112,14 @@ router.put("/:id", async (req, res, next) => {
   const id = req.params.id;
   const allBody = req.body;
   const deleteFriend = req.query.deleteFriend
-
+  const blocked = req.body.blocked
   try {
+   
     let userData = await User.findByPk(id);
+   
     let addFriends=userData.dataValues.friends
-    console.log(userData)
+
+
     if (
       allBody.delete == false &&
       !userData.favoriteGames.some((e) => e === allBody.favorite)
@@ -131,13 +130,26 @@ router.put("/:id", async (req, res, next) => {
         (e) => e !== allBody.favorite
       );
     }
-    if(deleteFriend=="no" && !addFriends.some(e=>e===allBody.friends)){
-      addFriends=[...addFriends, allBody.friends]
-    }
-    else if (deleteFriend=="yes"){
-      addFriends = userData.dataValues.friends.filter(e=>e !== allBody.friends) 
-    }
 
+   
+      if(deleteFriend=="no" && !addFriends.some(e=>e===allBody.friends)){
+        addFriends=[...addFriends, allBody.friends]
+      }
+      else if (deleteFriend=="yes"){
+        addFriends = userData.dataValues.friends.filter(e=>e !== allBody.friends) 
+      }
+    
+
+
+      if (blocked=="yes"){
+        allBody.blockedUsers=[...userData.dataValues.blockedUsers,allBody.blockedUsers]
+      } else if (blocked=="no"){
+        allBody.blockedUsers= userData.dataValues.blockedUsers.filter(e=> e != allBody.blockedUsers)
+      }
+      if(allBody.coins){
+          allBody.coins=Number(allBody.coins)
+        }
+        
     await userData.update({
       friends : addFriends,
       nickname: allBody.nickname,
@@ -152,10 +164,11 @@ router.put("/:id", async (req, res, next) => {
       servers: allBody.servers,
       missionCompleted: allBody.missionCompleted,
       isAdmin: allBody.isAdmin,
-      isSuperAdmin: allBody.isAdmin,
+      isSuperAdmin: allBody.isSuperAdmin,
       rating: allBody.rating,
       plan: allBody.plan,
       description: allBody.description,
+      blockedUsers:allBody.blockedUsers
     });
     res.status(200).json("user updated");
   } catch (error) {
