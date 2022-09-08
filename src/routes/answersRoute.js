@@ -1,69 +1,128 @@
-const { default: axios } = require("axios");
+const { axios } = require("axios");
 const express = require("express");
 const router = express.Router();
-const { Chat, User } = require("../db.js");
-
+const { Answer, Forum, User } = require("../db.js");
 
 router.post("/", async (req, res, next) => {
-  const chat = req.body;
-  let idRoom = [chat.user1Id, chat.user2Id].sort().join("_");
+  const idForum = req.body.idForum ? req.body.idForum : req.query.idForum;
+  const idUser = req.body.idUser ? req.body.idUser : req.query.idUser;
+  const forum = req.body;
   try {
-    await Chat.findOrCreate({
-      where: { id: idRoom },
+    await Answer.create({
+      comment: forum.comment,
+      forumId: idForum,
+      userId: idUser,
     });
-    let user1 = await User.findByPk(chat.user1Id);
-    let user2 = await User.findByPk(chat.user2Id);
-    let chatRoom = await Chat.findByPk(idRoom);
-    await chatRoom.addUser(user1);
-    await chatRoom.addUser(user2);
-    res.send("chat creado correctamente");
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-
-router.get("/", async (req, res, next) => {
-  try {
-    let chats = await Chat.findAll();
-    res.send(chats);
+    res.send("Comment posted!");
   } catch (error) {
     next(error);
   }
 });
 
-
-router.get("/:id", async (req, res, next) => {
-  let id = req.params.id ? req.params.id : req.body.id;
+router.get("/", async (req, res, next) => {
   try {
-    let chats = await Chat.findByPk(id);
-    res.send(chats);
+    let id = req.query.id ? req.query.id : req.body.id;
+    let forumData;
+    if (id) {
+      forumData = await Answer.findByPk(id, {
+        include: [
+          {
+            model: Forum,
+            attributes: ["id", "title", "deleteFlag"],
+          },
+          {
+            model: User,
+            attributes: [
+              "id",
+              "nickname",
+              "email",
+              "img",
+              "deleteFlag",
+              "bannedFlag",
+              "isAdmin",
+              "rating",
+              "plan",
+            ],
+          },
+        ],
+      });
+    } else {
+      forumData = await Answer.findAll({
+        include: [
+          {
+            model: Forum,
+            attributes: ["id", "title", "deleteFlag"],
+          },
+          {
+            model: User,
+            attributes: [
+              "id",
+              "nickname",
+              "email",
+              "img",
+              "deleteFlag",
+              "bannedFlag",
+              "isAdmin",
+              "rating",
+              "plan",
+            ],
+          },
+        ],
+      });
+    }
+    res.send(forumData);
   } catch (error) {
     console.log(error);
   }
 });
 
+router.get("/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const forumData = await Answer.findByPk(id, {
+      include: [
+        {
+          model: Forum,
+          attributes: ["id", "title", "deleteFlag"],
+        },
+        {
+          model: User,
+          attributes: [
+            "id",
+            "nickname",
+            "email",
+            "img",
+            "deleteFlag",
+            "bannedFlag",
+            "isAdmin",
+            "rating",
+            "plan",
+          ],
+        },
+      ],
+    });
+    res.send(forumData);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.put("/:id", async (req, res, next) => {
-  const id = req.params.id ? req.params.id : req.body.id;
+  const id = req.params.id;
   const allBody = req.body;
   try {
-    let chatData = await Chat.findByPk(id);
-    let userChat = [
-      {
-        userId: allBody.userId,
-        messages: allBody.messages,
-        createdAt: chatData.updatedAt,
-      },
-    ];
-    chatData.messages = allBody.messages && allBody.userId ? [...chatData.messages, userChat]: [...chatData.messages];
-    await chatData.update({
-      messages: chatData.messages,
+    let forumData = await Answer.findByPk(id);
+    if(allBody.like){
+      allBody.like=[...forumData.like,allBody.like]
+    }
+    await forumData.update({
+      comment: allBody.comment,
+      like:allBody.like,
       deleteFlag: allBody.deleteFlag,
     });
-    res.status(200).json("messege modified");
+    res.json("Commentario editado correctamente");
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 });
 
