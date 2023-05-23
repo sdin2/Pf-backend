@@ -1,11 +1,11 @@
 const socketServerIo = require('./src/app.js');
 const { conn } = require('./src/db.js');
 const { saveAllGamesInDb } = require('./src/controllers/GamesController');
-let PORT = 3001;
+let PORT = process.env.PORT;
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
-	socketServerIo.listen(3001, () => {
+	socketServerIo.listen(PORT, () => {
 		saveAllGamesInDb();
 		console.log(`%s listening at 3001`); // eslint-disable-line no-console
 	});
